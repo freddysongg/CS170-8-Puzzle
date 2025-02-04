@@ -2,6 +2,7 @@
     Purpose: Implement the search algorithms + heuristics
 """
 
+from collections import defaultdict
 from queue import PriorityQueue
 from node import Node
 
@@ -12,6 +13,7 @@ def generic_search(puzzle, algorithm):
     """
     expanded_nodes = 0
     max_queue_size = 1
+    depth = defaultdict(int)
 
     if algorithm == a_star_misplaced:
         heuristic_cost = puzzle.calculate_misplaced_tile_heuristic(puzzle.initial_state)
@@ -35,16 +37,20 @@ def generic_search(puzzle, algorithm):
     while True:
         # if EMPTY(nodes) then return "failure"
         if nodes.empty():
-            return None
+            return None, depth
 
         # node = REMOVE-FRONT(nodes)
         _, node = nodes.get()
         expanded_nodes += 1
+        
+        # For data tracking
+        current_depth = node.path_cost
+        depth[current_depth] += 1
 
         # if problem.GOAL-TEST(node.STATE) succeeds then return node
         if puzzle.goal_test(node.state):
             node.update_metrics(expanded_nodes, max_queue_size)
-            return node
+            return node, depth
         
         # Track the maximum queue size
         current_queue_size = nodes.qsize()
@@ -95,7 +101,7 @@ def a_star_misplaced(pQueue, child, puzzle=None):
 
 def a_star_manhattan(pQueue, child, puzzle):
     # Calculate heuristic cost using Manhattan distance heuristic
-    heuristic_cost = puzzle.manhattan_distance_heuristic(child.state)
+    heuristic_cost = puzzle.calculate_manhattan_distance_heuristic(child.state)
     total_cost = child.path_cost + heuristic_cost
     pQueue.put((total_cost, child))
     return pQueue
