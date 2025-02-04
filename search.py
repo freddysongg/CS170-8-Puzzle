@@ -5,6 +5,7 @@
 from queue import PriorityQueue
 from node import Node
 
+
 def generic_search(puzzle, algorithm):
     """
     General search algorithm that expands nodes based on the given queueing function.
@@ -20,7 +21,9 @@ def generic_search(puzzle, algorithm):
     if algorithm == a_star_misplaced:
         heuristic_cost = puzzle.calculate_misplaced_tile_heuristic(puzzle.initial_state)
     elif algorithm == a_star_manhattan:
-        heuristic_cost = puzzle.calculate_manhattan_distance_heuristic(puzzle.initial_state)
+        heuristic_cost = puzzle.calculate_manhattan_distance_heuristic(
+            puzzle.initial_state
+        )
     else:
         heuristic_cost = 0  # For UCS
 
@@ -45,27 +48,30 @@ def generic_search(puzzle, algorithm):
             return node
 
         # nodes = QUEUEING-FUNCTION(nodes, EXPAND(node, problem.OPERATORS))
-        for successor_state, action in puzzle.get_successors(node.state):
-                if algorithm == a_star_misplaced:
-                    child_heuristic = puzzle.calculate_misplaced_tile_heuristic(successor_state)
-                elif algorithm == a_star_manhattan:
-                    child_heuristic = puzzle.calculate_manhattan_distance_heuristic(
-                        successor_state
-                    )
-                else:
-                    child_heuristic = 0  # UCS has no heuristic
-                    
-                child = Node(
-                    state=successor_state,
-                    parent=node,
-                    action=action,
-                    path_cost=node.path_cost + 1,
-                    heuristic_cost=child_heuristic,
+        for successor_state, action in puzzle.get_children(node.state):
+            if algorithm == a_star_misplaced:
+                child_heuristic = puzzle.calculate_misplaced_tile_heuristic(
+                    successor_state
                 )
+            elif algorithm == a_star_manhattan:
+                child_heuristic = puzzle.calculate_manhattan_distance_heuristic(
+                    successor_state
+                )
+            else:
+                child_heuristic = 0  # UCS has no heuristic
 
-                # Add child node to queue using the user selected strategy
-                nodes = algorithm(nodes, child, puzzle)
-                
+            child = Node(
+                state=successor_state,
+                parent=node,
+                action=action,
+                path_cost=node.path_cost + 1,
+                heuristic_cost=child_heuristic,
+            )
+
+            # Add child node to queue using the user selected strategy
+            nodes = algorithm(nodes, child, puzzle)
+
+
 def uniform_cost_search(pQueue, child, puzzle=None):
     # Priority is assigned as g(n)
     pQueue.put((child.path_cost, child))

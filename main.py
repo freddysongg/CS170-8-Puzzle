@@ -20,6 +20,7 @@ from search import (
     a_star_manhattan,
 )
 
+
 def make_puzzle():
     print("\nEnter your puzzle, using 0 to represent the blank space.")
     print(
@@ -43,11 +44,12 @@ def make_puzzle():
             )
 
         return puzzle
-    
+
+
 def main():
     print("Welcome to my 8-Puzzle Solver!")
     print("Type '1' to use the default puzzle, or '2' to create your own.")
-    
+
     try:
         choice = int(input("Enter your choice: "))
         if choice == 1:
@@ -69,12 +71,12 @@ def main():
     goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
 
     puzzle = Puzzle(initial_state, goal_state)
-    
+
     print("\nSelect algorithm:")
     print("(1) Uniform Cost Search")
     print("(2) A* with Misplaced Tile Heuristic")
     print("(3) A* with Manhattan Distance Heuristic")
-    
+
     choice = int(input("Please enter your choice: "))
     if choice == 1:
         # Use Uniform Cost Search
@@ -88,12 +90,12 @@ def main():
     else:
         print("Invalid choice! Please enter 1, 2, or 3.")
         return
-    
+
     if result is None:
         print("No solution found.")
     else:
         print("\nGoal state!")
-        
-        
+
+
 if __name__ == "__main__":
     main()
