@@ -7,6 +7,9 @@ class Puzzle:
         self.initial_state = initial_state
         self.goal_state = goal_state
         
+    def goal_test(self, state):
+        return state == self.goal_state
+    
     def calculate_misplaced_tile_heuristic(self, state):
         count=0
         for i in range(3):
