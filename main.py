@@ -80,21 +80,43 @@ def main():
     choice = int(input("Please enter your choice: "))
     if choice == 1:
         # Use Uniform Cost Search
-        result, data = generic_search(puzzle, uniform_cost_search)
+        result = generic_search(puzzle, uniform_cost_search)
     elif choice == 2:
         # Use A* with Misplaced Tile Heuristic
-        result, data = generic_search(puzzle, a_star_misplaced)
+        result = generic_search(puzzle, a_star_misplaced)
     elif choice == 3:
         # Use A* with Manhattan Distance Heuristic
-        result, data = generic_search(puzzle, a_star_manhattan)
+        result = generic_search(puzzle, a_star_manhattan)
     else:
         print("Invalid choice! Please enter 1, 2, or 3.")
         return
+
+    # Metrics for data visualization
+    metrics = {
+        "solution_depth": 0,
+        "expanded_nodes": 0,
+        "max_queue_size": 0,
+        "execution_time": 0,
+    }
 
     if result is None:
         print("No solution found.")
     else:
         print("\nGoal state!")
+
+        metrics["solution_depth"] = len(result.get_soln()) - 1
+        metrics["expanded_nodes"] = result.expanded_nodes
+        metrics["max_queue_size"] = result.max_queue_size
+
+        print(f"The solution depth was {metrics['solution_depth']}")
+        print(f"Number of nodes expanded: {metrics['expanded_nodes']}")
+        print(f"Max queue size: {metrics['max_queue_size']}")
+        print("\nSolution Path:")
+        for state, action, g, h in result.get_soln():
+            print(f"The best state to expand with a g(n) = {g} and h(n) = {h} is...")
+            for row in state:
+                print(row)
+            print()
 
 
 if __name__ == "__main__":
