@@ -38,9 +38,9 @@ def plot_metrics(data, algo):
 
 
 def compare_algorithms(algo):
-    nodes_expanded = []
-    max_queue_size = []
-    solution_depth = []
+    expanded_nodes = [5980588, 50592, 12268]
+    max_queue_size = [10970837, 89673, 21785]
+    solution_depth = [15, 15, 15]
 
     fig, ax = plt.subplots(figsize=(12, 8))
 
@@ -51,7 +51,7 @@ def compare_algorithms(algo):
     r3 = [x + bar_width for x in r2]
 
     # Plot metrics
-    ax.bar(r1, nodes_expanded, width=bar_width, label="Nodes Expanded")
+    ax.bar(r1, expanded_nodes, width=bar_width, label="Nodes Expanded")
     ax.bar(r2, max_queue_size, width=bar_width, label="Max Queue Size")
     ax.bar(r3, solution_depth, width=bar_width, label="Solution Depth")
 
@@ -66,7 +66,7 @@ def compare_algorithms(algo):
     # Add the value labels on top of bars
     for i in range(len(algo)):
         ax.text(
-            r1[i], nodes_expanded[i], str(nodes_expanded[i]), ha="center", va="bottom"
+            r1[i], expanded_nodes[i], str(expanded_nodes[i]), ha="center", va="bottom"
         )
         ax.text(
             r2[i], max_queue_size[i], str(max_queue_size[i]), ha="center", va="bottom"

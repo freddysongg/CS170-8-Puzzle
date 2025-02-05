@@ -19,7 +19,7 @@ from search import (
     a_star_misplaced,
     a_star_manhattan,
 )
-from visualization import plot_depth_vs_nodes, plot_metrics
+from visualization import compare_algorithms, plot_depth_vs_nodes, plot_metrics
 
 
 def make_puzzle():
@@ -51,6 +51,14 @@ def plot_data(puzzle):
     ucs_node, ucs_depth_data = generic_search(puzzle, uniform_cost_search)
     misplaced_node, misplaced_depth_data = generic_search(puzzle, a_star_misplaced)
     manhattan_node, manhattan_depth_data = generic_search(puzzle, a_star_manhattan)
+
+    compare_algorithms(
+        [
+            "Uniform Cost Search",
+            "A* with Misplaced Tile Heuristic",
+            "A* with Manhattan Distance Heuristic",
+        ]
+    )
 
     plot_depth_vs_nodes(ucs_depth_data, misplaced_depth_data, manhattan_depth_data)
 
