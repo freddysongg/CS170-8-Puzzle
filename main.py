@@ -19,6 +19,7 @@ from search import (
     a_star_misplaced,
     a_star_manhattan,
 )
+from visualization import plot_depth_vs_nodes, plot_metrics
 
 
 def make_puzzle():
@@ -46,6 +47,14 @@ def make_puzzle():
         return puzzle
 
 
+def plot_data(puzzle):
+    ucs_node, ucs_depth_data = generic_search(puzzle, uniform_cost_search)
+    misplaced_node, misplaced_depth_data = generic_search(puzzle, a_star_misplaced)
+    manhattan_node, manhattan_depth_data = generic_search(puzzle, a_star_manhattan)
+
+    plot_depth_vs_nodes(ucs_depth_data, misplaced_depth_data, manhattan_depth_data)
+
+
 def main():
     print("Welcome to my 8-Puzzle Solver!")
     print("Type '1' to use the default puzzle, or '2' to create your own.")
@@ -54,7 +63,7 @@ def main():
         choice = int(input("Enter your choice: "))
         if choice == 1:
             # Default puzzle
-            initial_state = [[5, 2, 8], [4, 1, 7], [0, 3, 6]]
+            initial_state = [[2, 1, 3], [5, 4, 0], [7, 8, 6]]
         elif choice == 2:
             # Custom puzzle
             initial_state = make_puzzle()
@@ -80,13 +89,13 @@ def main():
     choice = int(input("Please enter your choice: "))
     if choice == 1:
         # Use Uniform Cost Search
-        result = generic_search(puzzle, uniform_cost_search)
+        result, depth = generic_search(puzzle, uniform_cost_search)
     elif choice == 2:
         # Use A* with Misplaced Tile Heuristic
-        result = generic_search(puzzle, a_star_misplaced)
+        result, depth = generic_search(puzzle, a_star_misplaced)
     elif choice == 3:
         # Use A* with Manhattan Distance Heuristic
-        result = generic_search(puzzle, a_star_manhattan)
+        result, depth = generic_search(puzzle, a_star_manhattan)
     else:
         print("Invalid choice! Please enter 1, 2, or 3.")
         return
@@ -117,6 +126,19 @@ def main():
             for row in state:
                 print(row)
             print()
+
+        algo = ""
+        if choice == 1:
+            algo = "Uniform Cost Search"
+        elif choice == 2:
+            algo = "A* with Misplaced Tile Heuristic"
+        elif choice == 3:
+            algo = "A* with Manhattan Distance Heuristic"
+
+        plot_metrics(metrics, algo)
+
+    # Optional, display the nodes expanded vs solution depth graph
+    # plot_data(puzzle)
 
 
 if __name__ == "__main__":

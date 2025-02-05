@@ -104,5 +104,5 @@ def plot_depth_vs_nodes(ucs_data, misplaced_data, manhattan_data):
     plt.legend()
     plt.grid(True)
     plt.xticks(depths)
-    plt.savefig("node_expansion_vs_solution_depth (ucs).png")
+    plt.savefig("node_expansion_vs_solution_depth.png")
     plt.show()
