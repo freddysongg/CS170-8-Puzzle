@@ -2,59 +2,65 @@
     Purpose: Implement the search algorithms + heuristics
 """
 
+import time
 from collections import defaultdict
 from queue import PriorityQueue
 from node import Node
 
 
-def generic_search(puzzle, algorithm):
-    """
-    General search algorithm that expands nodes based on the algorithm the user selected.
-    """
+TIMEOUT = int(600)  # 10 minutes
+
+
+def generic_search(puzzle, algorithm, timeout=TIMEOUT):
+    start = time.time()
     expanded_nodes = 0
     max_queue_size = 1
     depth = defaultdict(int)
 
+    heuristic_cost = 0
     if algorithm == a_star_misplaced:
         heuristic_cost = puzzle.calculate_misplaced_tile_heuristic(puzzle.initial_state)
     elif algorithm == a_star_manhattan:
         heuristic_cost = puzzle.calculate_manhattan_distance_heuristic(
             puzzle.initial_state
         )
-    else:
-        heuristic_cost = 0  # For UCS
 
-    # MAKE-QUEUE(MAKE-NODE(problem.INITIAL-STATE))
     initial_node = Node(
         state=puzzle.initial_state, path_cost=0, heuristic_cost=heuristic_cost
     )
     nodes = PriorityQueue()
     nodes.put((initial_node.total_cost(), initial_node))
 
-    while True:
-        # if EMPTY(nodes) then return "failure"
-        if nodes.empty():
-            return None, depth
+    while not nodes.empty():
+        if time.time() - start > timeout:
+            metrics = {
+                "expanded_nodes": expanded_nodes,
+                "max_queue_size": max_queue_size,
+                "time": timeout,
+                "timed_out": True,
+            }
+            return None, depth, metrics
 
-        # node = REMOVE-FRONT(nodes)
         _, node = nodes.get()
         expanded_nodes += 1
 
-        # For data tracking
         current_depth = node.path_cost
         depth[current_depth] += 1
 
-        # if problem.GOAL-TEST(node.STATE) succeeds then return node
         if puzzle.goal_test(node.state):
+            metrics = {
+                "expanded_nodes": expanded_nodes,
+                "max_queue_size": max_queue_size,
+                "time": time.time() - start,
+                "timed_out": False,
+            }
             node.update_metrics(expanded_nodes, max_queue_size)
-            return node, depth
+            return node, depth, metrics
 
-        # Track the maximum queue size
         current_queue_size = nodes.qsize()
         if current_queue_size > max_queue_size:
             max_queue_size = current_queue_size
 
-        # nodes = QUEUEING-FUNCTION(nodes, EXPAND(node, problem.OPERATORS))
         for successor_state, action in puzzle.get_children(node.state):
             if algorithm == a_star_misplaced:
                 child_heuristic = puzzle.calculate_misplaced_tile_heuristic(
@@ -65,7 +71,7 @@ def generic_search(puzzle, algorithm):
                     successor_state
                 )
             else:
-                child_heuristic = 0  # UCS has no heuristic
+                child_heuristic = 0
 
             child = Node(
                 state=successor_state,
@@ -75,8 +81,15 @@ def generic_search(puzzle, algorithm):
                 heuristic_cost=child_heuristic,
             )
 
-            # Add child node to queue using the user selected strategy
             nodes = algorithm(nodes, child, puzzle)
+
+    metrics = {
+        "expanded_nodes": expanded_nodes,
+        "max_queue_size": max_queue_size,
+        "time": time.time() - start,
+        "timed_out": False,
+    }
+    return None, depth, metrics
 
 
 def uniform_cost_search(pQueue, child, puzzle=None):

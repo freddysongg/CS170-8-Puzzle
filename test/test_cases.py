@@ -5,3 +5,14 @@ initial_states = {
     4: [[0, 1, 2], [4, 5, 3], [7, 8, 6]],  # Doable
     5: [[8, 7, 1], [6, 0, 2], [5, 4, 3]],  # Oh Boy
 }
+
+test_cases = [
+    {"initial_state": [[1, 2, 3], [4, 5, 6], [7, 8, 0]], "depth": 0},
+    {"initial_state": [[1, 2, 3], [4, 5, 6], [0, 7, 8]], "depth": 2},
+    {"initial_state": [[1, 2, 3], [5, 0, 6], [4, 7, 8]], "depth": 4},
+    {"initial_state": [[1, 3, 6], [5, 0, 2], [4, 7, 8]], "depth": 8},
+    {"initial_state": [[1, 3, 6], [5, 0, 7], [4, 8, 2]], "depth": 12},
+    {"initial_state": [[1, 6, 7], [5, 0, 3], [4, 8, 2]], "depth": 16},
+    {"initial_state": [[7, 1, 2], [4, 8, 5], [6, 3, 0]], "depth": 20},
+    {"initial_state": [[0, 7, 2], [4, 6, 1], [3, 5, 8]], "depth": 24},
+]

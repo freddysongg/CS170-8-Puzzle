@@ -37,72 +37,52 @@ def plot_metrics(data, algo):
     plt.show()
 
 
-def compare_algorithms(algo):
-    expanded_nodes = [5980588, 50592, 12268]
-    max_queue_size = [10970837, 89673, 21785]
-    solution_depth = [15, 15, 15]
-
-    fig, ax = plt.subplots(figsize=(12, 8))
-
-    bar_width = 0.25
-
-    r1 = range(len(algo))
-    r2 = [x + bar_width for x in r1]
-    r3 = [x + bar_width for x in r2]
-
-    # Plot metrics
-    ax.bar(r1, expanded_nodes, width=bar_width, label="Nodes Expanded")
-    ax.bar(r2, max_queue_size, width=bar_width, label="Max Queue Size")
-    ax.bar(r3, solution_depth, width=bar_width, label="Solution Depth")
-
-    # Add labels and title
-    ax.set_xlabel("Algorithm")
-    ax.set_ylabel("Count")
-    ax.set_title("Algorithm Performance Comparison")
-    ax.set_xticks([r + bar_width for r in range(len(algo))])
-    ax.set_xticklabels(algo, rotation=45)
-    ax.legend()
-
-    # Add the value labels on top of bars
-    for i in range(len(algo)):
-        ax.text(
-            r1[i], expanded_nodes[i], str(expanded_nodes[i]), ha="center", va="bottom"
-        )
-        ax.text(
-            r2[i], max_queue_size[i], str(max_queue_size[i]), ha="center", va="bottom"
-        )
-        ax.text(
-            r3[i], solution_depth[i], str(solution_depth[i]), ha="center", va="bottom"
-        )
-
-    plt.tight_layout()
-    plt.savefig("algorithm_comparison.png")
+def plot_time_vs_depth(results):
+    plt.figure(figsize=(10, 6))
+    for algo_name, data in results.items():
+        depths = data["depths"]
+        times = data["times"]
+        s_pairs = sorted(zip(depths, times))
+        s_depths, s_times = zip(*s_pairs)
+        plt.plot(s_depths, s_times, label=algo_name, marker="o")
+    plt.xlabel("Solution Depth")
+    plt.ylabel("Time (seconds)")
+    plt.title("Time vs. Solution Depth by Algorithm")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("time_vs_depth.png")
     plt.show()
 
 
-def plot_depth_vs_nodes(ucs_data, misplaced_data, manhattan_data):
+def plot_nodes_vs_depth(results):
     plt.figure(figsize=(10, 6))
-    max_depth = max(
-        max(ucs_data.keys(), default=0),
-        max(misplaced_data.keys(), default=0),
-        max(manhattan_data.keys(), default=0),
-    )
-
-    depths = list(range(max_depth + 1))
-
-    ucs_counts = [ucs_data.get(d, 0) for d in depths]
-    misplaced_counts = [misplaced_data.get(d, 0) for d in depths]
-    manhattan_counts = [manhattan_data.get(d, 0) for d in depths]
-
-    plt.plot(depths, ucs_counts, label="Uniform Cost Search", marker="o")
-    plt.plot(depths, misplaced_counts, label="A* (Misplaced Tile)", marker="s")
-    plt.plot(depths, manhattan_counts, label="A* (Manhattan)", marker="^")
-
+    for algo_name, data in results.items():
+        depths = data["depths"]
+        nodes = data["nodes"]
+        s_pairs = sorted(zip(depths, nodes))
+        s_depths, s_nodes = zip(*s_pairs)
+        plt.plot(s_depths, s_nodes, label=algo_name, marker="o")
     plt.xlabel("Solution Depth")
-    plt.ylabel("Nodes Expanded at Depth")
-    plt.title("Nodes Expanded vs. Solution Depth for Each Algorithm")
+    plt.ylabel("Nodes Expanded")
+    plt.title("Nodes Expanded vs. Solution Depth by Algorithm")
     plt.legend()
     plt.grid(True)
-    plt.xticks(depths)
-    plt.savefig("node_expansion_vs_solution_depth.png")
+    plt.savefig("nodes_vs_depth.png")
+    plt.show()
+
+
+def plot_max_queue_vs_depth(results):
+    plt.figure(figsize=(10, 6))
+    for algo_name, data in results.items():
+        depths = data["depths"]
+        queue = data["queue"]
+        s_pairs = sorted(zip(depths, queue))
+        s_depths, s_queue = zip(*s_pairs)
+        plt.plot(s_depths, s_queue, label=algo_name, marker="o")
+    plt.xlabel("Solution Depth")
+    plt.ylabel("Max Queue Size")
+    plt.title("Max Queue Size (# of nodes) vs. Solution Depth by Algorithm")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("max_queue_size_vs_depth.png")
     plt.show()

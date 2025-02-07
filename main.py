@@ -19,7 +19,13 @@ from search import (
     a_star_misplaced,
     a_star_manhattan,
 )
-from visualization import compare_algorithms, plot_depth_vs_nodes, plot_metrics
+from test.test_cases import test_cases
+from visualization import (
+    plot_metrics,
+    plot_time_vs_depth,
+    plot_nodes_vs_depth,
+    plot_max_queue_vs_depth,
+)
 
 
 def make_puzzle():
@@ -30,7 +36,6 @@ def make_puzzle():
     print("Press RETURN only after finishing each row.\n")
 
     puzzle = []
-    # Collect each row of the puzzle
     for i in range(3):
         row = list(map(int, input(f"Enter row {i + 1}: ").split()))
         if len(row) != 3:
@@ -47,37 +52,62 @@ def make_puzzle():
         return puzzle
 
 
-def plot_data(puzzle):
-    ucs_node, ucs_depth_data = generic_search(puzzle, uniform_cost_search)
-    misplaced_node, misplaced_depth_data = generic_search(puzzle, a_star_misplaced)
-    manhattan_node, manhattan_depth_data = generic_search(puzzle, a_star_manhattan)
+def test():
+    algorithms = [
+        ("A* Manhattan", a_star_manhattan),
+        ("A* Misplaced Tile", a_star_misplaced),
+        ("Uniform Cost Search", uniform_cost_search),
+    ]
 
-    compare_algorithms(
-        [
-            "Uniform Cost Search",
-            "A* with Misplaced Tile Heuristic",
-            "A* with Manhattan Distance Heuristic",
-        ]
-    )
+    results = {
+        "A* Manhattan": {"depths": [], "times": [], "nodes": [], "queue": []},
+        "A* Misplaced Tile": {"depths": [], "times": [], "nodes": [], "queue": []},
+        "Uniform Cost Search": {"depths": [], "times": [], "nodes": [], "queue": []},
+    }
 
-    plot_depth_vs_nodes(ucs_depth_data, misplaced_depth_data, manhattan_depth_data)
+    for test_case in test_cases:
+        initial_state = test_case["initial_state"]
+        expected_depth = test_case["depth"]
+        goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+        puzzle = Puzzle(initial_state, goal_state)
+
+        for algo_name, algo in algorithms:
+            result, depth_data, metrics = generic_search(puzzle, algo)
+
+            if result is None:
+                print(f"No solution found for {algo_name} on depth {expected_depth}")
+                continue
+
+            results[algo_name]["depths"].append(expected_depth)
+            results[algo_name]["times"].append(metrics["time"])
+            results[algo_name]["nodes"].append(metrics["expanded_nodes"])
+            results[algo_name]["queue"].append(metrics["max_queue_size"])
+
+    plot_time_vs_depth(results)
+    plot_nodes_vs_depth(results)
+    plot_max_queue_vs_depth(results)
 
 
 def main():
     print("Welcome to my 8-Puzzle Solver!")
-    print("Type '1' to use the default puzzle, or '2' to create your own.")
+    print(
+        "Type '1' to use the default puzzle,'2' to create your own, or '3' to run the experiments."
+    )
 
     try:
         choice = int(input("Enter your choice: "))
         if choice == 1:
             # Default puzzle
-            initial_state = [[2, 1, 3], [5, 4, 0], [7, 8, 6]]
+            initial_state = [[0, 7, 2], [4, 6, 1], [3, 5, 8]]
         elif choice == 2:
             # Custom puzzle
             initial_state = make_puzzle()
             if initial_state is None:
                 print("Failed to input a valid puzzle. Exiting.")
                 return
+        elif choice == 3:
+            test()
+            return
         else:
             print("Invalid choice! Please enter '1' or '2'.")
             return
@@ -86,7 +116,6 @@ def main():
         return
 
     goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
-
     puzzle = Puzzle(initial_state, goal_state)
 
     print("\nSelect algorithm:")
@@ -97,13 +126,13 @@ def main():
     choice = int(input("Please enter your choice: "))
     if choice == 1:
         # Use Uniform Cost Search
-        result, depth = generic_search(puzzle, uniform_cost_search)
+        result, depth, ucs_metrics = generic_search(puzzle, uniform_cost_search)
     elif choice == 2:
         # Use A* with Misplaced Tile Heuristic
-        result, depth = generic_search(puzzle, a_star_misplaced)
+        result, depth, misplaced_metrics = generic_search(puzzle, a_star_misplaced)
     elif choice == 3:
         # Use A* with Manhattan Distance Heuristic
-        result, depth = generic_search(puzzle, a_star_manhattan)
+        result, depth, manhattan_metrics = generic_search(puzzle, a_star_manhattan)
     else:
         print("Invalid choice! Please enter 1, 2, or 3.")
         return
@@ -144,9 +173,6 @@ def main():
             algo = "A* with Manhattan Distance Heuristic"
 
         plot_metrics(metrics, algo)
-
-    # Optional, display the nodes expanded vs solution depth graph
-    # plot_data(puzzle)
 
 
 if __name__ == "__main__":
