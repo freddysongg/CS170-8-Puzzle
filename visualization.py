@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 
 
 def plot_metrics(data, algo):
+    """ 
+        Plot the 3 metrics, expanded nodes, max queue size, and solution depth for each algorithm
+    """
     expanded_nodes = data["expanded_nodes"]
     max_queue_size = data["max_queue_size"]
     solution_depth = data["solution_depth"]
@@ -38,6 +41,9 @@ def plot_metrics(data, algo):
 
 
 def plot_time_vs_depth(results):
+    """ 
+        Plot the time vs. solution depth for each algorithm
+    """
     plt.figure(figsize=(10, 6))
     for algo_name, data in results.items():
         depths = data["depths"]
@@ -55,6 +61,9 @@ def plot_time_vs_depth(results):
 
 
 def plot_nodes_vs_depth(results):
+    """ 
+        Plot the nodes expanded vs. solution depth for each algorithm
+    """
     plt.figure(figsize=(10, 6))
     for algo_name, data in results.items():
         depths = data["depths"]
@@ -72,6 +81,9 @@ def plot_nodes_vs_depth(results):
 
 
 def plot_max_queue_vs_depth(results):
+    """ 
+        Plot the max queue size vs. solution depth for each algorithm
+    """
     plt.figure(figsize=(10, 6))
     for algo_name, data in results.items():
         depths = data["depths"]

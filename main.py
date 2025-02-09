@@ -7,8 +7,10 @@
         - A* with the Misplaced Tile heuristic
         - A* with the Manhattan Distance heuristic
         
-        This is all my work, excluding template or example code.
+        This is all my work, excluding template or example code, which I reference in Dr. Keogh's example project report and project slides.
         
+        Reused work: 
+        - Prompting, I followed the example project prompting
     Purpose: Entry point for running the program with user input or default puzzle.
 """
 
@@ -29,6 +31,10 @@ from visualization import (
 
 
 def make_puzzle():
+    """
+    Function that converts user input into a puzzle state.
+    Returns None if the input is invalid.
+    """
     print("\nEnter your puzzle, using 0 to represent the blank space.")
     print(
         "Please enter a valid 8-puzzle configuration, delimiting numbers with spaces."
@@ -53,6 +59,9 @@ def make_puzzle():
 
 
 def test():
+    """
+    Function that runs the test cases and visualizes the results.
+    """
     algorithms = [
         ("A* Manhattan", a_star_manhattan),
         ("A* Misplaced Tile", a_star_misplaced),
@@ -65,12 +74,14 @@ def test():
         "Uniform Cost Search": {"depths": [], "times": [], "nodes": [], "queue": []},
     }
 
+    # Loop through each test case
     for test_case in test_cases:
         initial_state = test_case["initial_state"]
         expected_depth = test_case["depth"]
         goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
         puzzle = Puzzle(initial_state, goal_state)
 
+        # Loop through each algorithm
         for algo_name, algo in algorithms:
             result, depth_data, metrics = generic_search(puzzle, algo)
 
@@ -83,6 +94,7 @@ def test():
             results[algo_name]["nodes"].append(metrics["expanded_nodes"])
             results[algo_name]["queue"].append(metrics["max_queue_size"])
 
+    # Plot data
     plot_time_vs_depth(results)
     plot_nodes_vs_depth(results)
     plot_max_queue_vs_depth(results)
@@ -106,6 +118,7 @@ def main():
                 print("Failed to input a valid puzzle. Exiting.")
                 return
         elif choice == 3:
+            # Run test cases of depth 0-24
             test()
             return
         else:
@@ -164,6 +177,7 @@ def main():
                 print(row)
             print()
 
+        # Visualize the metrics (optional)
         algo = ""
         if choice == 1:
             algo = "Uniform Cost Search"
@@ -172,7 +186,7 @@ def main():
         elif choice == 3:
             algo = "A* with Manhattan Distance Heuristic"
 
-        plot_metrics(metrics, algo)
+        # plot_metrics(metrics, algo)
 
 
 if __name__ == "__main__":
